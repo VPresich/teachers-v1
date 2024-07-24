@@ -21,8 +21,7 @@ const FavoriteButton = ({ id }) => {
 
   const theme = useSelector(selectTheme);
   const isFavorite = useSelector((state) => selectIsFavorite(state, id));
-
-  const handleToggleFavorite = () => {
+    const handleToggleFavorite = () => {
     if (!isLoggedIn) {
       setShowFavoriteDiny(true);
       return;
@@ -42,7 +41,7 @@ const FavoriteButton = ({ id }) => {
     <>
       <button className={css.btn} onClick={handleToggleFavorite}>
         <svg
-          className={clsx(isFavorite ? css[theme] : css.default)}
+          className={clsx(isFavorite ? css[theme] : css.notFavorite)}
           width="24"
           height="24"
           aria-label="btn icon"

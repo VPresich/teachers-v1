@@ -48,8 +48,8 @@ export default function Teachers() {
         query: queryParams,
       })
     );
-    // isLoggedIn && dispatch(fetchFavorites());
-  }, [dispatch, currentPage, itemsPerPage, queryParams]);
+    isLoggedIn && dispatch(fetchFavorites());
+  }, [dispatch, currentPage, itemsPerPage, queryParams, isLoggedIn]);
 
   const handleLoadMore = () => {
     dispatch(setPage(currentPage + 1));

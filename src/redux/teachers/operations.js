@@ -64,10 +64,14 @@ export const getTeacherById = createAsyncThunk(
 
       const teachers = snapshot.val();
       const teacherArray = Object.values(teachers);
+      console.log("id: ", id);
+
       const teacherData = teacherArray.find((teacher) => teacher._id === id);
       if (!teacherData) {
         return thunkAPI.rejectWithValue("Teacher not found");
       }
+
+      console.log("teacherData", teacherData);
 
       return teacherData;
     } catch (error) {
