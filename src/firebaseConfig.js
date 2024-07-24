@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 const fbApiKey = import.meta.env.VITE_FB_APIKEY;
 const fbAuthDomain = import.meta.env.VITE_FB_AUTHDOMAIN;
@@ -22,6 +23,7 @@ const firebaseConfig = {
   measurementId: fbMeasurementId,
 };
 
-export const fbApp = initializeApp(firebaseConfig);
+const fbApp = initializeApp(firebaseConfig);
 export const fbAuth = getAuth(fbApp);
 export const fbStore = getFirestore(fbApp);
+export const fbDataBase = getDatabase(fbApp);

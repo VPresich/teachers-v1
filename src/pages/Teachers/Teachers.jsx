@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import clsx from "clsx";
-import { getTeachersWithParams } from "../../redux/teachers/operations";
+import {
+  getTeachersWithParams,
+  // getTeachersPerPage,
+} from "../../redux/teachers/operations";
 import { fetchFavorites } from "../../redux/favorites/operations";
 import { selectIsLoggedIn, selectTheme } from "../../redux/auth/selectors";
 import { selectQueryParams } from "../../redux/filters/selectors";
@@ -46,7 +49,7 @@ export default function Teachers() {
       })
     );
     // isLoggedIn && dispatch(fetchFavorites());
-  }, [dispatch, currentPage, itemsPerPage, isLoggedIn, queryParams]);
+  }, [dispatch, currentPage, itemsPerPage, queryParams]);
 
   const handleLoadMore = () => {
     dispatch(setPage(currentPage + 1));

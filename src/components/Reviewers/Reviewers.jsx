@@ -9,8 +9,8 @@ export default function Reviewers({ reviews = [] }) {
   const theme = useSelector(selectTheme);
   return (
     <ul className={css.container}>
-      {reviews.map(({ _id, reviewer_name, reviewer_rating, comment }) => (
-        <li className={css.elem} key={_id}>
+      {reviews.map(({ reviewer_name, reviewer_rating, comment }, index) => (
+        <li className={css.elem} key={index}>
           <div className={css.title}>
             <div className={clsx(css.letter, css[theme])}>
               {`${reviewer_name.charAt(0).toUpperCase()}`}
