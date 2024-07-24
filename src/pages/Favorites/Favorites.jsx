@@ -15,16 +15,16 @@ export default function Favorites() {
   const favorites = useSelector(selectFavorites);
   const theme = useSelector(selectTheme);
 
-  useEffect(() => {
-    dispatch(fetchFavorites())
-      .unwrap()
-      .then((data) => {
-        console.log(data);
-      })
-      .catch(() => {
-        toast.error("Error fetching");
-      });
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchFavorites())
+  //     .unwrap()
+  //     .then((data) => {
+  //       console.log(data);
+  //     })
+  //     .catch(() => {
+  //       toast.error("Error fetching");
+  //     });
+  // }, [dispatch]);
 
   return (
     <>

@@ -18,7 +18,6 @@ export default function RegisterForm({ handleRegistration }) {
   const { handleSubmit } = methods;
 
   const onSubmit = async (values) => {
-    // console.log("SUBMIT Registration", values);
     handleRegistration(values);
   };
 

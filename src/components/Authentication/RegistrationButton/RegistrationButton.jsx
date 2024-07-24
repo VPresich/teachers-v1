@@ -3,9 +3,14 @@ import { useDispatch } from "react-redux";
 import { register } from "../../../redux/auth/operations";
 import ModalWrapper from "../../UI/ModalWrapper/ModalWrapper";
 import RegisterForm from "../Forms/RegisterForm/RegisterForm";
+import {
+  errNotify,
+  successNotify,
+} from "../../../auxiliary/notification/notification";
+import { ERR_REGISTRATION, SUCCESS_REGISTRATION } from "../Forms/constants";
 import css from "./RegistrationButton.module.css";
 
-const RegistrationButton = (handleClick) => {
+const RegistrationButton = () => {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const dispatch = useDispatch();
 
@@ -22,10 +27,12 @@ const RegistrationButton = (handleClick) => {
     dispatch(register(values))
       .unwrap()
       .then(() => {
+        successNotify(SUCCESS_REGISTRATION);
         setShowRegisterForm(false);
-        handleClick && handleClick();
       })
-      .catch(() => {});
+      .catch(() => {
+        errNotify(ERR_REGISTRATION);
+      });
   };
 
   return (

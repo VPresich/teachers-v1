@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsRefreshing } from "../redux/auth/selectors";
 import { refreshUser } from "../redux/auth/operations";
-import { resetRefreshState } from "../redux/auth/slice";
 import { Toaster } from "react-hot-toast";
 import AppBar from "./AppBar/AppBar";
 import AppRouter from "./AppRouter";
@@ -14,13 +13,7 @@ export default function App() {
   const isRefreshing = useSelector(selectIsRefreshing);
 
   useEffect(() => {
-    dispatch(refreshUser())
-      .unwrap()
-      .then(() => {})
-      .catch(() => {})
-      .finally(() => {
-        dispatch(resetRefreshState());
-      });
+    dispatch(refreshUser());
   }, [dispatch]);
 
   return (

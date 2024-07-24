@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setAuthHeader } from "../../api/axiosInst";
 import {
   register,
   logIn,
+  logInWithGoogle,
   logOut,
   refreshUser,
   updateTheme,
@@ -10,10 +10,10 @@ import {
 
 const initialState = {
   user: { name: null, email: null, theme: "default", avatarURL: "" },
-  token: null,
   isLoggedIn: false,
   isRefreshing: true,
   error: null,
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -23,15 +23,7 @@ const authSlice = createSlice({
     setTheme(state, action) {
       state.user.theme = action.payload;
     },
-    resetRefreshState(state, action) {
-      state.isRefreshing = action.payload;
-    },
-    saveToken(state, action) {
-      state.token = action.payload;
-      setAuthHeader(state.token);
-    },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
@@ -39,39 +31,84 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = {
+          name: action.payload.displayName,
+          email: action.payload.email,
+          theme: state.user.theme,
+          avatarURL: action.payload.photoURL,
+        };
+        state.token = action.payload.accessToken;
         state.isLoggedIn = true;
         state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.error = action.payload;
       })
+      //----------------------------------------------
+
       .addCase(logIn.pending, (state) => {
         state.error = null;
         state.isLoggedIn = false;
       })
       .addCase(logIn.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = {
+          name: action.payload.name
+            ? action.payload.name
+            : action.payload.email,
+          email: action.payload.email,
+          theme: action.payload.theme ? action.payload.theme : state.user.theme,
+          avatarURL: action.payload.photoURL,
+        };
+        state.token = action.payload.idToken;
         state.isLoggedIn = true;
         state.error = null;
       })
       .addCase(logIn.rejected, (state, action) => {
         state.error = action.payload;
       })
+      //---------------------------------------------
+
+      .addCase(logInWithGoogle.pending, (state) => {
+        state.error = null;
+        state.isLoggedIn = false;
+      })
+      .addCase(logInWithGoogle.fulfilled, (state, action) => {
+        if (!action.payload) return;
+        state.user = {
+          name: action.payload.name
+            ? action.payload.name
+            : action.payload.email,
+          email: action.payload.email,
+          theme: action.payload.theme ? action.payload.theme : state.user.theme,
+          avatarURL: action.payload.photoURL,
+        };
+        state.token = action.payload.idToken;
+        state.isLoggedIn = true;
+        state.error = null;
+      })
+      .addCase(logInWithGoogle.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      //---------------------------------------------
+
       .addCase(logOut.pending, (state) => {
         state.error = null;
       })
       .addCase(logOut.fulfilled, (state) => {
-        state.user = { name: null, email: null, theme: "default" };
-        state.token = null;
+        state.user = {
+          name: null,
+          email: null,
+          theme: "default",
+          avatarURL: "",
+        };
         state.isLoggedIn = false;
         state.error = null;
+        state.token = null;
       })
       .addCase(logOut.rejected, (state, action) => {
         state.error = action.payload;
       })
+      //-------------------------------------------
 
       .addCase(refreshUser.pending, (state) => {
         state.isRefreshing = true;
@@ -79,15 +116,23 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(refreshUser.fulfilled, (state, action) => {
-        state.user = action.payload;
         state.isLoggedIn = true;
         state.isRefreshing = false;
         state.error = null;
+        state.user = {
+          name: action.payload.name
+            ? action.payload.name
+            : action.payload.email,
+          email: action.payload.email,
+          theme: action.payload.theme ? action.payload.theme : state.user.theme,
+          avatarURL: action.payload.photoURL,
+        };
       })
       .addCase(refreshUser.rejected, (state, action) => {
         state.isRefreshing = false;
         state.error = action.payload;
       })
+      //-----------------------------------------------
 
       .addCase(updateTheme.pending, (state) => {
         state.error = null;
@@ -103,6 +148,4 @@ const authSlice = createSlice({
 });
 
 export const { setTheme } = authSlice.actions;
-export const { resetRefreshState } = authSlice.actions;
 export default authSlice.reducer;
-export const { saveToken } = authSlice.actions;

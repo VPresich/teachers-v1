@@ -1,6 +1,5 @@
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { selectTheme } from "../../redux/auth/selectors";
 import DocumentTitle from "../../components/DocumentTitle";
@@ -11,8 +10,7 @@ import imgGreenUrl from "../../assets/img/home/green_block.svg";
 import imgBlueUrl from "../../assets/img/home/blue_block.svg";
 import imgPinkUrl from "../../assets/img/home/pink_block.svg";
 import imgRedUrl from "../../assets/img/home/red_block.svg";
-import { refreshUser } from "../../redux/auth/operations";
-import { saveToken } from "../../redux/auth/slice";
+import css from "./HomePage.module.css";
 
 const selectImgUrl = (theme) => {
   let imgUrl = imgDefaultUrl;
@@ -39,26 +37,8 @@ const selectImgUrl = (theme) => {
   return imgUrl;
 };
 
-import { useNavigate } from "react-router-dom";
-
-import css from "./HomePage.module.css";
-
 export default function HomePage() {
-  const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token");
-
-    if (token) {
-      dispatch(saveToken(token));
-      dispatch(refreshUser());
-      navigate("/");
-    }
-  }, [dispatch, location.search, navigate]);
-
   const theme = useSelector(selectTheme);
 
   const handleClick = () => {
