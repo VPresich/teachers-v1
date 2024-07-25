@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logOut } from "../auth/operations";
 import {
-  fetchFavoritesByTeacherIds,
   fetchFavorites,
   addFavorite,
   removeFavorite,
@@ -19,19 +18,6 @@ const favoritesSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFavoritesByTeacherIds.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchFavoritesByTeacherIds.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
-        state.items = action.payload;
-      })
-      .addCase(fetchFavoritesByTeacherIds.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      })
-      //---------------------------------------------
       .addCase(fetchFavorites.pending, (state) => {
         state.isLoading = true;
         state.error = null;

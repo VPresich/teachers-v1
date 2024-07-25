@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInst } from "../../api/axiosInst";
 import { fbAuth, fbDataBase } from "../../firebaseConfig";
 import { ref, get, set, push, remove } from "firebase/database";
 
@@ -7,10 +6,24 @@ export const fetchFavoritesByTeacherIds = createAsyncThunk(
   "teachers/getFavoritsByTeacherIds",
   async (ids, thunkAPI) => {
     try {
-      const promises = ids.map((id) => axiosInst.get(`teachers/${id}`));
-      const responses = await Promise.all(promises);
-      const data = responses.map((response) => response.data);
-      return data;
+      const user = fbAuth.currentUser;
+      if (!user) return thunkAPI.rejectWithValue("The user is not authorized");
+
+      const teachersRef = ref(fbDataBase, "teachers");
+      const snapshot = await get(teachersRef);
+
+      const favorites = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const teacher = childSnapshot.val();
+
+          if (ids.includes(teacher._id)) {
+            favorites.push(teacher);
+          }
+        });
+      }
+
+      return favorites;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -37,8 +50,6 @@ export const fetchFavorites = createAsyncThunk(
           }
         });
       }
-
-      console.log("favorites", favorites);
 
       return favorites;
     } catch (error) {
@@ -82,18 +93,6 @@ export const addFavorite = createAsyncThunk(
     }
   }
 );
-
-// export const removeFavorite = createAsyncThunk(
-//   "favorites/removeFavorite",
-//   async (idTeacher, thunkAPI) => {
-//     try {
-//       const response = await axiosInst.delete(`favorites/${idTeacher}`);
-//       return response.data;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.message);
-//     }
-//   }
-// );
 
 export const removeFavorite = createAsyncThunk(
   "favorites/removeFavorite",

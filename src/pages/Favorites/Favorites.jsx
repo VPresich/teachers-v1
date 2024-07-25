@@ -1,30 +1,35 @@
-import toast from "react-hot-toast";
-import clsx from "clsx";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import clsx from "clsx";
 import { selectFavorites } from "../../redux/favorites/selectors";
+import { Link } from "react-router-dom";
 import { selectTheme } from "../../redux/auth/selectors";
-import { fetchFavorites } from "../../redux/favorites/operations";
+import {
+  fetchFavoritesByTeacherIds,
+  fetchFavorites,
+} from "../../redux/favorites/operations";
 import CardsList from "../../components/CardsList/CardsList";
 import DocumentTitle from "../../components/DocumentTitle";
 import css from "./Favorites.module.css";
-import { Link } from "react-router-dom";
 
 export default function Favorites() {
+  const [favorites, setFavorites] = useState([]);
+  const favotiteIds = useSelector(selectFavorites);
+
   const dispatch = useDispatch();
-  const favorites = useSelector(selectFavorites);
   const theme = useSelector(selectTheme);
 
-  // useEffect(() => {
-  //   dispatch(fetchFavorites())
-  //     .unwrap()
-  //     .then((data) => {
-  //       console.log(data);
-  //     })
-  //     .catch(() => {
-  //       toast.error("Error fetching");
-  //     });
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchFavorites());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchFavoritesByTeacherIds(favotiteIds))
+      .unwrap()
+      .then((data) => {
+        setFavorites(data);
+      });
+  }, [dispatch, favotiteIds]);
 
   return (
     <>
