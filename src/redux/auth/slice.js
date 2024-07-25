@@ -9,11 +9,12 @@ import {
 } from "./operations";
 
 const initialState = {
-  user: { name: null, email: null, theme: "default", avatarURL: "" },
+  user: { name: null, email: null, avatarURL: "" },
   isLoggedIn: false,
   isRefreshing: true,
+  uid: null,
+  theme: "default",
   error: null,
-  token: null,
 };
 
 const authSlice = createSlice({
@@ -21,7 +22,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setTheme(state, action) {
-      state.user.theme = action.payload;
+      state.theme = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -34,10 +35,10 @@ const authSlice = createSlice({
         state.user = {
           name: action.payload.displayName,
           email: action.payload.email,
-          theme: state.user.theme,
           avatarURL: action.payload.photoURL,
         };
-        state.token = action.payload.accessToken;
+        state.theme = action.payload.theme || state.theme;
+        state.uid = action.payload.uid;
         state.isLoggedIn = true;
         state.error = null;
       })
@@ -56,10 +57,10 @@ const authSlice = createSlice({
             ? action.payload.name
             : action.payload.email,
           email: action.payload.email,
-          theme: action.payload.theme ? action.payload.theme : state.user.theme,
           avatarURL: action.payload.photoURL,
         };
-        state.token = action.payload.idToken;
+        state.theme = action.payload.theme || state.theme;
+        state.uid = action.payload.uid;
         state.isLoggedIn = true;
         state.error = null;
       })
@@ -79,10 +80,10 @@ const authSlice = createSlice({
             ? action.payload.name
             : action.payload.email,
           email: action.payload.email,
-          theme: action.payload.theme ? action.payload.theme : state.user.theme,
           avatarURL: action.payload.photoURL,
         };
-        state.token = action.payload.idToken;
+        state.theme = action.payload.theme || state.theme;
+        state.uid = action.payload.uid;
         state.isLoggedIn = true;
         state.error = null;
       })
@@ -98,12 +99,12 @@ const authSlice = createSlice({
         state.user = {
           name: null,
           email: null,
-          theme: "default",
           avatarURL: "",
         };
+        state.theme = "default";
         state.isLoggedIn = false;
         state.error = null;
-        state.token = null;
+        state.uid = null;
       })
       .addCase(logOut.rejected, (state, action) => {
         state.error = action.payload;
@@ -124,7 +125,6 @@ const authSlice = createSlice({
             ? action.payload.name
             : action.payload.email,
           email: action.payload.email,
-          theme: action.payload.theme ? action.payload.theme : state.user.theme,
           avatarURL: action.payload.photoURL,
         };
       })
@@ -138,7 +138,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(updateTheme.fulfilled, (state, action) => {
-        state.user.theme = action.payload.theme;
+        state.theme = action.payload;
         state.error = null;
       })
       .addCase(updateTheme.rejected, (state, action) => {

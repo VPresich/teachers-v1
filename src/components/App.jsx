@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsRefreshing } from "../redux/auth/selectors";
 import { refreshUser } from "../redux/auth/operations";
+
 import { Toaster } from "react-hot-toast";
 import AppBar from "./AppBar/AppBar";
 import AppRouter from "./AppRouter";
 import AppLayout from "./AppLayout/AppLayout";
 import Loader from "./UI/Loader/Loader";
-
 export default function App() {
   const dispatch = useDispatch();
   const isRefreshing = useSelector(selectIsRefreshing);

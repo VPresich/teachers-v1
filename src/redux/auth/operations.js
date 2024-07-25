@@ -9,8 +9,8 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { doc, setDoc } from "firebase/firestore";
-import { fbAuth, fbStore } from "../../firebaseConfig";
+import { set, ref, get, push } from "firebase/database";
+import { fbAuth, fbDataBase } from "../../firebaseConfig";
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -21,19 +21,21 @@ export const register = createAsyncThunk(
         email,
         password
       );
-
+      fbDataBase;
       const user = userCredential.user;
 
       await updateProfile(user, {
         displayName: name,
       });
 
+      const theme = await getTheme("teachers", user.uid);
+
       const userData = {
         uid: user.uid,
         email: user.email,
         name: user.displayName,
-        accessToken: user.accessToken,
         photoUrl: user.photoURL,
+        theme: theme,
       };
 
       return userData;
@@ -54,13 +56,14 @@ export const logIn = createAsyncThunk(
       );
 
       const user = userCredential.user;
+      const theme = await getTheme("teachers", user.uid);
 
       const userData = {
         uid: user.uid,
         email: user.email,
         name: user.displayName,
-        accessToken: user.accessToken,
         photoUrl: user.photoURL,
+        theme: theme,
       };
 
       return userData;
@@ -80,13 +83,14 @@ export const logInWithGoogle = createAsyncThunk(
       const userCredential = await signInWithPopup(fbAuth, googleProvider);
 
       const user = userCredential.user;
+      const theme = await getTheme("teachers", user.uid);
 
       const userData = {
         uid: user.uid,
         email: user.email,
         name: user.displayName,
-        accessToken: user.accessToken,
         photoUrl: user.photoURL,
+        theme: theme,
       };
       return userData;
     } catch (error) {
@@ -114,7 +118,6 @@ export const refreshUser = createAsyncThunk(
               uid: user.uid,
               email: user.email,
               name: user.displayName,
-              accessToken: user.accessToken,
               photoUrl: user.photoURL,
             };
             resolve(userData);
@@ -129,17 +132,83 @@ export const refreshUser = createAsyncThunk(
   }
 );
 
+const getTheme = async (collection, userId) => {
+  try {
+    const themesRef = ref(fbDataBase, "themes");
+    const snapshotThemes = await get(themesRef);
+
+    let theme = "yellow";
+
+    let themeRef = null;
+    if (snapshotThemes.exists()) {
+      snapshotThemes.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        if (data.user === userId && data.collection === collection) {
+          theme = data.theme;
+          themeRef = childSnapshot.ref;
+        }
+      });
+
+      if (!themeRef) {
+        const newThemeRef = push(themesRef);
+        await set(newThemeRef, {
+          user: userId,
+          collection: collection,
+          theme: theme,
+        });
+      }
+    } else {
+      const newThemeRef = push(themesRef);
+      await set(newThemeRef, {
+        user: userId,
+        collection: collection,
+        theme: theme,
+      });
+    }
+
+    return theme;
+  } catch {
+    return "default";
+  }
+};
+
 export const updateTheme = createAsyncThunk(
-  "users/themes",
-  async (data, thunkAPI) => {
+  "users/updateTheme",
+  async ({ collection, newTheme }, thunkAPI) => {
     try {
       const user = fbAuth.currentUser;
-      if (user) {
-        await setDoc(doc(fbStore, "users", user.uid), data, { merge: true });
-        return data;
-      } else {
+      if (!user) {
         return thunkAPI.rejectWithValue("User not authenticated");
       }
+      const themesRef = ref(fbDataBase, "themes");
+      const snapshotThemes = await get(themesRef);
+      let themeUpdated = false;
+
+      if (snapshotThemes.exists()) {
+        snapshotThemes.forEach(async (childSnapshot) => {
+          const data = childSnapshot.val();
+          if (data.user === user.uid && data.collection === collection) {
+            themeUpdated = true;
+            const themeRef = ref(fbDataBase, `themes/${childSnapshot.key}`);
+            await set(themeRef, {
+              user: user.uid,
+              collection: collection,
+              theme: newTheme,
+            });
+          }
+        });
+      }
+
+      if (!themeUpdated) {
+        const newThemeRef = push(themesRef);
+        await set(newThemeRef, {
+          user: user.uid,
+          collection: collection,
+          theme: newTheme,
+        });
+      }
+
+      return newTheme;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }

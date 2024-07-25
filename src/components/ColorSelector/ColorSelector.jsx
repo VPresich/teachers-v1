@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTheme } from "../../redux/auth/operations";
 import { selectTheme, selectIsLoggedIn } from "../../redux/auth/selectors";
-import { setTheme } from "../../redux/auth/slice";
 
 import iconsPath from "../../assets/img/icons.svg";
 import clsx from "clsx";
@@ -20,8 +19,7 @@ const ColorSelector = () => {
 
   const handleThemeChange = (event) => {
     const selectedTheme = event.target.value.toLowerCase();
-    dispatch(setTheme(selectedTheme));
-    dispatch(updateTheme({ theme: selectedTheme }));
+    dispatch(updateTheme({ collection: "teachers", newTheme: selectedTheme }));
     setIsOpen(false);
   };
 

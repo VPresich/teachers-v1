@@ -5,11 +5,8 @@ import { selectIsLoggedIn, selectTheme } from "../../../redux/auth/selectors";
 import ModalWrapper from "../../UI/ModalWrapper/ModalWrapper";
 import LoginForm from "../Forms/LoginForm/LoginForm";
 import { logOut, logIn } from "../../../redux/auth/operations";
-import {
-  successNotify,
-  errNotify,
-} from "../../../auxiliary/notification/notification";
-import { SUCCESS_LOGIN, ERR_LOGIN } from "../Forms/constants";
+import { errNotify } from "../../../auxiliary/notification/notification";
+import { ERR_LOGIN } from "../Forms/constants";
 import css from "./AuthButton.module.css";
 
 import clsx from "clsx";
@@ -33,7 +30,6 @@ export default function AuthButton({ children }) {
     dispatch(logIn(values))
       .unwrap()
       .then(() => {
-        successNotify(SUCCESS_LOGIN);
         setShowLoginForm(false);
       })
       .catch(() => {

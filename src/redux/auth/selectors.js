@@ -7,12 +7,9 @@ export const selectUserName = createSelector(
   (auth) => auth.user.name
 );
 
-export const selectIsLoggedIn = createSelector(
-  selectAuth,
-  (auth) => auth.isLoggedIn
-);
+export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 
-export const selectTheme = createSelector(selectUser, (user) => user.theme);
+export const selectTheme = (state) => state.auth.theme;
 
 export const selectIsRefreshing = createSelector(
   selectAuth,
