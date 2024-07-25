@@ -79,7 +79,7 @@ export const logInWithGoogle = createAsyncThunk(
     try {
       await signOut(fbAuth);
       const googleProvider = new GoogleAuthProvider();
-      googleProvider.setCustomParameters({});
+      googleProvider.setCustomParameters({ prompt: "select_account" });
       const userCredential = await signInWithPopup(fbAuth, googleProvider);
 
       const user = userCredential.user;
