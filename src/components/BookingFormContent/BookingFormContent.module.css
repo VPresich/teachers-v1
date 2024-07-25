@@ -87,11 +87,11 @@
 }
 
 .btnAuxStyles {
-  background-color: var(--yellow);
+  background-color: var(--default);
 }
 
 .btnAuxStyles:hover {
-  background-color: var(--yellow-accent);
+  background-color: var(--default-accent);
 }
 
 @media screen and (max-width: 768px) {

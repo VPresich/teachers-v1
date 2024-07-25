@@ -33,7 +33,7 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.user = {
-          name: action.payload.displayName,
+          name: action.payload.name,
           email: action.payload.email,
           avatarURL: action.payload.photoURL,
         };

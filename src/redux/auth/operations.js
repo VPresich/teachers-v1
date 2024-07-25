@@ -33,7 +33,7 @@ export const register = createAsyncThunk(
       const userData = {
         uid: user.uid,
         email: user.email,
-        name: user.displayName,
+        name,
         photoUrl: user.photoURL,
         theme: theme,
       };
