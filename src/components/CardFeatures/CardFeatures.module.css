@@ -1,6 +1,5 @@
 .container {
   display: flex;
-  flex-wrap: wrap;
   row-gap: 8px;
 }
 
@@ -50,4 +49,10 @@
   font-size: 16px;
   line-height: 1.5;
   color: var(--price);
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    flex-wrap: wrap;
+  }
 }
